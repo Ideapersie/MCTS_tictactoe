@@ -74,5 +74,46 @@ export class GameState{
         return validMoves;
     }
 
-    
+    makeMove(position: number): GameState {
+        if (!this.isValidMove(position)) {
+            throw new Error ('Invalid move at position ${position} ')
+        }
+        // Creates copy of current board state
+        const newBoard = [...this.board];
+
+        // Apply move to copied board
+        newBoard[position] = this.currentPlayer;
+
+        // Next player using previous function
+        const nextPlayer = getOppositePlayer(this.currentPlayer);
+
+        // Return new board state with updated positions
+        return new GameState(newBoard, nextPlayer);
+    }
+
+    private calculateGameResult(): 'X' | 'O' | 'draw' | 'ongoing' {
+        // define all possible winning-combinations 
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns  
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        // Check each winning combinations 
+        for (const combination in winningCombinations){
+            const[a, b, c] = combination;
+
+            if (this.board[a] !== Player.EMPTY &&
+                this.board[a] === this.board[b] &&
+                this.board[b] === this.board[c]){
+                    return this.board[a] as 'X' | 'O';
+                }
+            
+        }
+        // If there is an "EMPTY" space -> the game is still on ongoing 
+        const gameIsOngoing = this.board.includes(Player.EMPTY);
+        return gameIsOngoing ? 'ongoing' : 'draw';
+    }
+
+
 }
