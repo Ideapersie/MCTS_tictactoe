@@ -1,0 +1,13 @@
+{
+  "name": "mcts-tictactoe",
+  "version": "1.0.0",
+  "description": "Tic-tac-toe with Monte Carlo Tree Search AI",
+  "main": "js/main.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
