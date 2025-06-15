@@ -11,7 +11,7 @@ export function getOppositePlayer(player: Player): Player {
     if (player === Player.O) return Player.X;
 
     // Error handling for empty move 
-    throw new Error('Cannot get opposite player ${player} - only X and O are valid players');
+    throw new Error(`Cannot get opposite player ${player} - only X and O are valid players`);
 }
 
 export class GameState{
@@ -49,7 +49,7 @@ export class GameState{
     // 6 | 7 | 8 
     getPosition(index: number): Player {
         if (index < 0 || index > 8){
-            throw new Error('Invalid position, please input a between 0 & 8')
+            throw new Error(`Invalid position, please input a between 0 & 8`)
         }
         return this.board[index];
     }
@@ -75,8 +75,16 @@ export class GameState{
     }
 
     makeMove(position: number): GameState {
-        if (!this.isValidMove(position)) {
-            throw new Error ('Invalid move at position ${position} ')
+        if (position < 0 || position > 8) {
+            throw new Error (`Position must be between 0 & 8, Inputted: ${position}`)
+        }
+
+        if (this.board[position] != Player.EMPTY) {
+            throw new Error (`${position} is occupied, please choose a new move`)
+        }
+
+        if (this.calculateGameResult() != 'ongoing'){
+            throw new Error (`Game has ended, pleas start new game!`)
         }
         // Creates copy of current board state
         const newBoard = [...this.board];
@@ -100,7 +108,7 @@ export class GameState{
         ];
 
         // Check each winning combinations 
-        for (const combination in winningCombinations){
+        for (const combination of winningCombinations){
             const[a, b, c] = combination;
 
             if (this.board[a] !== Player.EMPTY &&
