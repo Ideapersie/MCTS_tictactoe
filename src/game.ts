@@ -31,7 +31,7 @@ export class GameState{
         }
 
         this.currentPlayer = currentPlayer;
-        this.gameResult = this.getGameResult()
+        this.gameResult = this.calculateGameResult()
 
     }
 
@@ -99,7 +99,13 @@ export class GameState{
         return new GameState(newBoard, nextPlayer);
     }
 
-    getGameResult(): 'X' | 'O' | 'draw' | 'ongoing' {
+    // Public getter method to prevent recalcuating 
+    getGameResult(): 'X' | 'O' | 'ongoing' | 'draw' {
+        return this.gameResult;
+    }
+
+    // Private method
+    private calculateGameResult(): 'X' | 'O' | 'draw' | 'ongoing' {
         // define all possible winning-combinations 
         const winningCombinations = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
