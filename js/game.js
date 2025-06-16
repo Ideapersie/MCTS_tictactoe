@@ -25,7 +25,7 @@ export class GameState {
             this.board = new Array(9).fill(Player.EMPTY);
         }
         this.currentPlayer = currentPlayer;
-        this.gameResult = this.calculateGameResult();
+        this.gameResult = this.getGameResult();
     }
     // getter methods
     getBoard() {
@@ -68,7 +68,7 @@ export class GameState {
         if (this.board[position] != Player.EMPTY) {
             throw new Error(`${position} is occupied, please choose a new move`);
         }
-        if (this.calculateGameResult() != 'ongoing') {
+        if (this.getGameResult() != 'ongoing') {
             throw new Error(`Game has ended, please start new game!`);
         }
         // Creates copy of current board state
@@ -80,7 +80,7 @@ export class GameState {
         // Return new board state with updated positions
         return new GameState(newBoard, nextPlayer);
     }
-    calculateGameResult() {
+    getGameResult() {
         // define all possible winning-combinations 
         const winningCombinations = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
