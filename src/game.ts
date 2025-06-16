@@ -2,7 +2,7 @@
 export enum Player{
     X = 'X', 
     O = 'O',
-    EMPTY = ' '
+    EMPTY = ''
 }
 
 // Helper function to switch players 
@@ -84,7 +84,7 @@ export class GameState{
         }
 
         if (this.calculateGameResult() != 'ongoing'){
-            throw new Error (`Game has ended, pleas start new game!`)
+            throw new Error (`Game has ended, please start new game!`)
         }
         // Creates copy of current board state
         const newBoard = [...this.board];
