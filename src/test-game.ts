@@ -42,8 +42,68 @@ function testGameStateCreation(): void{
     }
 }
 
+function testMakeMove(): void{
+    console.log(`Testing gameplay moves...\n`);
 
+    const game = new GameState();
 
+    assert(game.getPosition(4) === Player.EMPTY, `New board should be empty`)
+    assert(game.getCurrentPlayer() === Player.X, `The first move is made by Player X`)
+
+    // Apply move to the new game state 
+    const new_move = game.makeMove(4);
+
+    assert(new_move.getPosition(4) === Player.X, `The position is now occupied by Player X`)
+    assert(new_move.getCurrentPlayer() === Player.O, `The next move is made by Player O`);
+
+    try {
+        new_move.makeMove(4);
+        assert(false, `Move is occupied, should not be placed`);
+    } catch (error) {
+        console.log(`Prevented occupied move from playing`);
+    }
+
+    try {
+        new_move.makeMove(9);
+        assert(false, `Move is outside the board, should not be allowed`);
+    } catch(error) {
+        console.log(`Prevented out of bounds move`)
+    }
+}
+
+function testGameResultCalculation(): void{
+    console.log(`Testing Game Result calculation...\n`);
+
+    const horizontalWin = new GameState([
+        Player.X, Player.X, Player.X,
+        Player.O, Player.O, Player.X,
+        Player.X, Player.O, Player.O
+    ]);
+    assert(horizontalWin.getGameResult() === Player.X, `Player X wins due to horizontal connect`);
+
+    const VerticalWinO= new GameState([
+        Player.O, Player.EMPTY, Player.X,
+        Player.O, Player.X, Player.EMPTY,
+        Player.O, Player.X, Player.X
+    ]);
+    assert(VerticalWinO.getGameResult() === Player.O, `Player O wins due to vertical connect`);
+
+    const ongoingGame = new GameState([
+        Player.X, Player.EMPTY, Player.X,
+        Player.O, Player.O, Player.X,
+        Player.X, Player.EMPTY, Player.O
+    ]);
+    assert(ongoingGame.getGameResult() === 'ongoing', `The game is ongoing, no wins and there is still empty spaces`);
+
+    const drawGame = new GameState([
+        Player.X, Player.O, Player.X,
+        Player.O, Player.O, Player.X,
+        Player.X, Player.X, Player.O
+    ]);
+    assert(drawGame.getGameResult() === 'draw', `The game ends in a draw since there is no winners`);
+}
+
+// Function to run all these test cases
 function runAllTests(): void{
     console.log('Running game logic tests...\n');
 
