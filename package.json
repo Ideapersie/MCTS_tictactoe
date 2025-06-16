@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "Tic-tac-toe with Monte Carlo Tree Search AI",
   "main": "js/main.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "npm run build && node run-tests.js"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
