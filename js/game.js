@@ -25,7 +25,7 @@ export class GameState {
             this.board = new Array(9).fill(Player.EMPTY);
         }
         this.currentPlayer = currentPlayer;
-        this.gameResult = this.getGameResult();
+        this.gameResult = this.calculateGameResult();
     }
     // getter methods
     getBoard() {
@@ -80,7 +80,12 @@ export class GameState {
         // Return new board state with updated positions
         return new GameState(newBoard, nextPlayer);
     }
+    // Public getter method to prevent recalcuating 
     getGameResult() {
+        return this.gameResult;
+    }
+    // Private method
+    calculateGameResult() {
         // define all possible winning-combinations 
         const winningCombinations = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows

@@ -8,7 +8,7 @@ function assert(condition: boolean, message: string): void {
 }
 
 function testgetOppositePlayer(): void {
-    console.log(`Testing getOppositePlayer function...`)
+    console.log(`Testing getOppositePlayer function...\n`)
 
     // Test normal cases 
     assert(getOppositePlayer(Player.X) === Player.O, `Opponent of X -> O`)
@@ -24,12 +24,12 @@ function testgetOppositePlayer(): void {
 }
 
 function testGameStateCreation(): void{
-    console.log(`Testing GameState creation....`);
+    console.log(`Testing GameState creation....\n`);
 
     const newGame = new GameState();
-    assert(newGame.getCurrentPlayer() === Player.X, `New game should start with X`);
-    assert(newGame.getGameResult() === `ongoing`, `New game should be ongoing`);
-    assert(newGame.getValidMoves().length === 9, `New game should have 9 valid moves`);
+    assert(newGame.getCurrentPlayer() === Player.X, `New game starts with X`);
+    assert(newGame.getGameResult() === `ongoing`, `New game is ongoing`);
+    assert(newGame.getValidMoves().length === 9, `New game does have 9 valid moves`);
 
     // Test that all positions are empty at start 
     for (let i =0; i < 9 ; i++) {
@@ -112,6 +112,12 @@ function runAllTests(): void{
         console.log('');
 
         testGameStateCreation();
+        console.log('');
+
+        testMakeMove();
+        console.log('');
+
+        testGameResultCalculation();
         console.log('');
 
         console.log('All tests passed!')

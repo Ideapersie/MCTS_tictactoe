@@ -128,6 +128,4 @@ export class GameState{
         const gameIsOngoing = this.board.includes(Player.EMPTY);
         return gameIsOngoing ? 'ongoing' : 'draw';
     }
-
-
 }
