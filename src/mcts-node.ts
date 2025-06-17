@@ -8,9 +8,10 @@ export class MCTSNode {
     public wins: number;
     public unvisitedMoves: number[];
     public currentPlayer: Player; 
+    public currentMove: number;
 
 
-    constructor(gameState: GameState, parent: MCTSNode | null = null, currentPlayer: Player = Player.O) {
+    constructor(gameState: GameState, parent: MCTSNode | null = null, currentPlayer: Player = Player.O, currentMove: number =-1) {
         this.gameState = gameState;
         this.parent = parent; 
         this.children = [];
@@ -18,6 +19,7 @@ export class MCTSNode {
         this.wins = 0;
         this.unvisitedMoves = gameState.getValidMoves();
         this.currentPlayer = currentPlayer;
+        this.currentMove = currentMove;
     }
 
     // UCB1 formula to select next node to explore 
@@ -43,7 +45,7 @@ export class MCTSNode {
     // Method used for adding a new child to expand unvisited moves 
     addChild(move: number): MCTSNode {
         const newGameState = this.gameState.makeMove(move);
-        const newNode = new MCTSNode(newGameState, this, this.gameState.getCurrentPlayer());
+        const newNode = new MCTSNode(newGameState, this, this.gameState.getCurrentPlayer(), move);
 
         // Remove the move from unvisited nodes 
         this.unvisitedMoves = this.unvisitedMoves.filter(m => m !== move); 

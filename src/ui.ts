@@ -1,10 +1,15 @@
 import { GameState, Player } from "./game.js";
+import { MCTSAgent } from "./mcts-agent.js";
 
 // Global GameState -> current state of user interface 
 let currentGame = new GameState();
+let mctsAgent = new MCTSAgent(750); // 750 Iterations to start 
+let gameMode: 'PVP' | 'Player vs AI' = 'Player vs AI';
+let isAIThinking = false;
 
 function initializeUI(): void{
         createGameBoard();
+        createGameModeSelector();
         updateDisplay();
 }
 
@@ -24,8 +29,45 @@ function createGameBoard(): void{
     }
 }
 
+function createGameModeSelector(): void {
+    const controlsElement = document.querySelector('.controls') as HTMLElement;
+
+    if (!controlsElement) return;
+
+    // Create mode selector
+    const modeSelector = document.createElement('div');
+    modeSelector.className = 'mode-selector';
+    modeSelector.innerHTML = `
+        <label>
+            <input type="radio" name="gameMode" value="Player VS AI" checked>
+            Player VS AI
+        </label>
+        <label>
+            <input type="radio" name="gameMode" value="PVP
+            Player VS Player
+        </label>
+    `;
+
+    modeSelector.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        gameMode = target.value as 'Player vs AI' | 'PVP';
+        resetGame();
+    });
+
+    // Insert it before existing controls 
+    controlsElement.insertBefore(modeSelector, controlsElement.firstChild);
+}
+
 // Function to handle user clicks board squares
-function handleCellClick(position: number): void{
+async function handleCellClick(position: number): Promise<void>{
+    // Prevents clicking while AI is thinking 
+    if (isAIThinking) return;
+
+    // In AI mode, only allow human moves (X)
+    if (gameMode === 'PVP' && currentGame.getCurrentPlayer() === Player.O) {
+        return;
+    }
+
     try{
         currentGame = currentGame.makeMove(position);
         updateDisplay();
@@ -34,19 +76,14 @@ function handleCellClick(position: number): void{
         const result = currentGame.getGameResult();
 
         if (result !== 'ongoing'){
-            setTimeout(() => {
-                let message = '';
-                if (result === 'draw') {
-                    message = "It's a draw"
-                } else {
-                    message = `Player ${result} wins! 🎉`;
-                }
-
-                if (confirm(`${message}\n\n Would you like to play again?`)) {
-                    resetGame();
-                }
-            }, 100);
+            handleGameEnd();
+            return;
         }
+
+        if (gameMode === 'Player vs AI' && currentGame.getCurrentPlayer() === Player.O){
+            await makeAIMove();
+        }
+
     } catch (error) {
         // Display error-specific messages
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -59,6 +96,28 @@ function handleCellClick(position: number): void{
             alert(`Invalid move: ${errorMessage}`);
         }
     }
+}
+
+async function makeAIMove(): Promise<void> {
+    isAIThinking = true;
+    updateDisplay(); // Show AI message
+
+    try {
+        const aiMove = mctsAgent.selectMove(currentGame);
+        currentGame = currentGame.makeMove(aiMove);
+
+        isAIThinking = false; 
+        updateDisplay();
+
+        if (currentGame.getGameResult() !== 'ongoing') {
+            handleGameEnd();
+        }
+    } catch (error) {
+        isAIThinking = false;
+        console.error('AI move failed:', error);
+        alert('AI encountered an error. Please restart the game.');
+    }
+
 }
 
 // Update visual display to match the game state 
@@ -96,6 +155,25 @@ function updateDisplay(): void{
             infoElement.style.fontWeight = 'bold'
         }
     }
+}
+
+function handleGameEnd(): void{
+    const result = currentGame.getGameResult();
+
+    setTimeout(() => {
+        let message = '';
+        if (result === 'draw') {
+            message = "It's a draw"
+        } else if (gameMode === 'Player vs AI') {
+            message = result === 'X' ? 'Well done! You beat the AI' : 'AI won this time, Try again?';
+        } else {   
+            message = `Player ${result} wins! 🎉`;
+        }
+
+            if (confirm(`${message}\n\n Would you like to play again?`)) {
+                    resetGame();
+                }
+            }, 100);
 }
 
 // Reset the game to initial state 
