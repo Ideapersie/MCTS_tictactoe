@@ -1,8 +1,13 @@
 import { GameState, Player } from "./game.js";
+import { MCTSAgent } from "./mcts-agent.js";
 // Global GameState -> current state of user interface 
 let currentGame = new GameState();
+let mctsAgent = new MCTSAgent(750); // 750 Iterations to start 
+let gameMode = 'Player vs AI';
+let isAIThinking = false;
 function initializeUI() {
     createGameBoard();
+    createGameModeSelector();
     updateDisplay();
 }
 function createGameBoard() {
@@ -44,25 +49,25 @@ function createGameModeSelector() {
     controlsElement.insertBefore(modeSelector, controlsElement.firstChild);
 }
 // Function to handle user clicks board squares
-function handleCellClick(position) {
+async function handleCellClick(position) {
+    // Prevents clicking while AI is thinking 
+    if (isAIThinking)
+        return;
+    // In AI mode, only allow human moves (X)
+    if (gameMode === 'PVP' && currentGame.getCurrentPlayer() === Player.O) {
+        return;
+    }
     try {
         currentGame = currentGame.makeMove(position);
         updateDisplay();
         //check if game has ended 
         const result = currentGame.getGameResult();
         if (result !== 'ongoing') {
-            setTimeout(() => {
-                let message = '';
-                if (result === 'draw') {
-                    message = "It's a draw";
-                }
-                else {
-                    message = `Player ${result} wins! 🎉`;
-                }
-                if (confirm(`${message}\n\n Would you like to play again?`)) {
-                    resetGame();
-                }
-            }, 100);
+            handleGameEnd();
+            return;
+        }
+        if (gameMode === 'Player vs AI' && currentGame.getCurrentPlayer() === Player.O) {
+            await makeAIMove();
         }
     }
     catch (error) {
@@ -77,6 +82,24 @@ function handleCellClick(position) {
         else {
             alert(`Invalid move: ${errorMessage}`);
         }
+    }
+}
+async function makeAIMove() {
+    isAIThinking = true;
+    updateDisplay(); // Show AI message
+    try {
+        const aiMove = mctsAgent.selectMove(currentGame);
+        currentGame = currentGame.makeMove(aiMove);
+        isAIThinking = false;
+        updateDisplay();
+        if (currentGame.getGameResult() !== 'ongoing') {
+            handleGameEnd();
+        }
+    }
+    catch (error) {
+        isAIThinking = false;
+        console.error('AI move failed:', error);
+        alert('AI encountered an error. Please restart the game.');
     }
 }
 // Update visual display to match the game state 
@@ -113,6 +136,24 @@ function updateDisplay() {
             infoElement.style.fontWeight = 'bold';
         }
     }
+}
+function handleGameEnd() {
+    const result = currentGame.getGameResult();
+    setTimeout(() => {
+        let message = '';
+        if (result === 'draw') {
+            message = "It's a draw";
+        }
+        else if (gameMode === 'Player vs AI') {
+            message = result === 'X' ? 'Well done! You beat the AI' : 'AI won this time, Try again?';
+        }
+        else {
+            message = `Player ${result} wins! 🎉`;
+        }
+        if (confirm(`${message}\n\n Would you like to play again?`)) {
+            resetGame();
+        }
+    }, 100);
 }
 // Reset the game to initial state 
 function resetGame() {
