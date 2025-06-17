@@ -18,6 +18,31 @@ function createGameBoard() {
         boardElement.appendChild(cell);
     }
 }
+function createGameModeSelector() {
+    const controlsElement = document.querySelector('.controls');
+    if (!controlsElement)
+        return;
+    // Create mode selector
+    const modeSelector = document.createElement('div');
+    modeSelector.className = 'mode-selector';
+    modeSelector.innerHTML = `
+        <label>
+            <input type="radio" name="gameMode" value="Player VS AI" checked>
+            Player VS AI
+        </label>
+        <label>
+            <input type="radio" name="gameMode" value="PVP
+            Player VS Player
+        </label>
+    `;
+    modeSelector.addEventListener('change', (e) => {
+        const target = e.target;
+        gameMode = target.value;
+        resetGame();
+    });
+    // Insert it before existing controls 
+    controlsElement.insertBefore(modeSelector, controlsElement.firstChild);
+}
 // Function to handle user clicks board squares
 function handleCellClick(position) {
     try {
