@@ -40,11 +40,11 @@ function createGameModeSelector(): void {
     modeSelector.innerHTML = `
         <label>
             <input type="radio" name="gameMode" value="Player VS AI" checked>
-            Player VS AI
+            Player vs AI
         </label>
         <label>
             <input type="radio" name="gameMode" value="PVP
-            Player VS Player
+            Player vs Player
         </label>
     `;
 
@@ -64,7 +64,7 @@ async function handleCellClick(position: number): Promise<void>{
     if (isAIThinking) return;
 
     // In AI mode, only allow human moves (X)
-    if (gameMode === 'PVP' && currentGame.getCurrentPlayer() === Player.O) {
+    if (gameMode === 'Player vs AI' && currentGame.getCurrentPlayer() === Player.O) {
         return;
     }
 
@@ -89,11 +89,11 @@ async function handleCellClick(position: number): Promise<void>{
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
         if (errorMessage.includes('occupied')) {
-            alert('Position already occupied, please choose an empty cell.');
+            showSimpleMessage('Position already occupied, please choose an empty cell.');
         } else if (errorMessage.includes('ended')) {
-            alert('The game has ended!, Please start a new game.');
+            showSimpleMessage('The game has ended!, Please start a new game.');
         } else {
-            alert(`Invalid move: ${errorMessage}`);
+            showSimpleMessage(`Invalid move: ${errorMessage}`);
         }
     }
 }
@@ -115,7 +115,7 @@ async function makeAIMove(): Promise<void> {
     } catch (error) {
         isAIThinking = false;
         console.error('AI move failed:', error);
-        alert('AI encountered an error. Please restart the game.');
+        showSimpleMessage('AI encountered an error. Please restart the game.');
     }
 
 }
@@ -128,7 +128,10 @@ function updateDisplay(): void{
         if (cell) {
             const cellValue = currentGame.getPosition(i);
             cell.textContent = cellValue === Player.EMPTY ? '' : cellValue;
-            cell.disabled = cellValue !== Player.EMPTY || currentGame.getGameResult() !== 'ongoing';
+            cell.disabled = cellValue !== Player.EMPTY || 
+                            currentGame.getGameResult() !== 'ongoing' ||
+                            isAIThinking ||
+                            (gameMode === 'Player vs AI' && currentGame.getCurrentPlayer() === Player.O);
 
             // Add visual styling for X vs O 
             if (cellValue === Player.X) {
@@ -145,7 +148,10 @@ function updateDisplay(): void{
         const currentPlayer = currentGame.getCurrentPlayer();
         const gameStatus = currentGame.getGameResult();
 
-        if (gameStatus === 'ongoing') {
+        if (isAIThinking) {
+            infoElement.textContent = 'AI is thinkin...';
+            infoElement.style.color = '#f39c12';
+        } else if (gameStatus === 'ongoing') {
             infoElement.textContent = `Current Player: ${currentPlayer}`;
             infoElement.style.color = currentPlayer === Player.X ? '#1eb88d' : '#f39738';
         } else {
@@ -160,25 +166,67 @@ function updateDisplay(): void{
 function handleGameEnd(): void{
     const result = currentGame.getGameResult();
 
-    setTimeout(() => {
-        let message = '';
-        if (result === 'draw') {
-            message = "It's a draw"
-        } else if (gameMode === 'Player vs AI') {
-            message = result === 'X' ? 'Well done! You beat the AI' : 'AI won this time, Try again?';
-        } else {   
-            message = `Player ${result} wins! 🎉`;
-        }
+    const notification = document.getElementById('gameNotification') as HTMLElement;
+    const message = document.getElementById('notificationMessage') as HTMLElement;
 
-            if (confirm(`${message}\n\n Would you like to play again?`)) {
-                    resetGame();
-                }
-            }, 100);
+    if (!notification || !message) return;
+
+    let messageText = '';
+    let notificationText = '';
+
+    if (result === 'draw') {
+        messageText = "It's a draw"
+        notificationText = 'draw';
+    } else if (gameMode === 'Player vs AI') {
+        if (result === 'X'){
+            messageText = 'Well done! You beat the AI';
+            notificationText = 'winnner-x'
+        } else {
+            messageText = 'AI won this time, Try again?';
+            notificationText = 'winnner-o'
+        }
+    // PVP mode
+    } else {   
+        messageText = `Player ${result} wins! 🎉`;
+        notificationText = result === 'X' ? 'winner-x' : 'winner-o';
+    }
+
+    message.textContent = messageText;
+    notification.className = `notification ${notificationText}`;
+    notification.style.display = 'block';
+};
+
+function showSimpleMessage(text: string): void {
+    const notification = document.getElementById('gameNotification') as HTMLElement;
+    const message = document.getElementById('notificationMesage') as HTMLElement;
+    const playAgainButton = document.getElementById('playAgainButton') as HTMLElement;
+
+    if (!notification || !message) return;
+
+    message.textContent = text;
+    notification.className = 'notifcation';
+    playAgainButton.style.display = 'none';
+    notification.style.display = 'block';
+
+    // Auto-hide notifications after 3 seconds
+    setTimeout(() => {
+        notification.style.display = 'none';
+        playAgainButton.style.display = 'block';
+    }, 3000);
+
 }
+
 
 // Reset the game to initial state 
 function resetGame(): void {
     currentGame = new GameState();
+    isAIThinking = false;
+
+    // Hide notifications 
+    const notification = document.getElementById('gameNotification') as HTMLElement;
+    if(notification) {
+        notification.style.display = 'none';
+    }
     updateDisplay();
 }
 
