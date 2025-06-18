@@ -7,7 +7,7 @@ let gameMode = 'Player vs AI';
 let isAIThinking = false;
 function initializeUI() {
     createGameBoard();
-    createGameModeSelector();
+    setupGameModeSelector();
     updateDisplay();
 }
 function createGameBoard() {
@@ -23,30 +23,16 @@ function createGameBoard() {
         boardElement.appendChild(cell);
     }
 }
-function createGameModeSelector() {
-    const controlsElement = document.querySelector('.controls');
-    if (!controlsElement)
-        return;
-    // Create mode selector
-    const modeSelector = document.createElement('div');
-    modeSelector.className = 'mode-selector';
-    modeSelector.innerHTML = `
-        <label>
-            <input type="radio" name="gameMode" value="Player VS AI" checked>
-            Player vs AI
-        </label>
-        <label>
-            <input type="radio" name="gameMode" value="PVP
-            Player vs Player
-        </label>
-    `;
-    modeSelector.addEventListener('change', (e) => {
-        const target = e.target;
-        gameMode = target.value;
-        resetGame();
+// Updated function to work with existing HTML mode selector
+function setupGameModeSelector() {
+    const modeInputs = document.querySelectorAll('input[name="gameMode"]');
+    modeInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            const target = e.target;
+            gameMode = target.value;
+            resetGame();
+        });
     });
-    // Insert it before existing controls 
-    controlsElement.insertBefore(modeSelector, controlsElement.firstChild);
 }
 // Function to handle user clicks board squares
 async function handleCellClick(position) {
@@ -99,7 +85,7 @@ async function makeAIMove() {
     catch (error) {
         isAIThinking = false;
         console.error('AI move failed:', error);
-        alert('AI encountered an error. Please restart the game.');
+        showSimpleMessage('AI encountered an error. Please restart the game.');
     }
 }
 // Update visual display to match the game state 

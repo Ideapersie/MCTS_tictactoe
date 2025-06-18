@@ -9,7 +9,7 @@ let isAIThinking = false;
 
 function initializeUI(): void{
         createGameBoard();
-        createGameModeSelector();
+        setupGameModeSelector();
         updateDisplay();
 }
 
@@ -29,33 +29,17 @@ function createGameBoard(): void{
     }
 }
 
-function createGameModeSelector(): void {
-    const controlsElement = document.querySelector('.controls') as HTMLElement;
-
-    if (!controlsElement) return;
-
-    // Create mode selector
-    const modeSelector = document.createElement('div');
-    modeSelector.className = 'mode-selector';
-    modeSelector.innerHTML = `
-        <label>
-            <input type="radio" name="gameMode" value="Player VS AI" checked>
-            Player vs AI
-        </label>
-        <label>
-            <input type="radio" name="gameMode" value="PVP
-            Player vs Player
-        </label>
-    `;
-
-    modeSelector.addEventListener('change', (e) => {
-        const target = e.target as HTMLInputElement;
-        gameMode = target.value as 'Player vs AI' | 'PVP';
-        resetGame();
+// Updated function to work with existing HTML mode selector
+function setupGameModeSelector(): void {
+    const modeInputs = document.querySelectorAll('input[name="gameMode"]') as NodeListOf<HTMLInputElement>;
+    
+    modeInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            const target = e.target as HTMLInputElement;
+            gameMode = target.value as 'Player vs AI' | 'PVP';
+            resetGame();
+        });
     });
-
-    // Insert it before existing controls 
-    controlsElement.insertBefore(modeSelector, controlsElement.firstChild);
 }
 
 // Function to handle user clicks board squares
@@ -157,11 +141,12 @@ function updateDisplay(): void{
         } else {
             infoElement.textContent = `Game Over - ${gameStatus === 'draw' ? 'Draw!' : `${gameStatus} Wins!`}`;
             infoElement.style.color = gameStatus === 'X' ? '#1eb88d' : '#f39738';
-            infoElement.style.fontSize = '1.2em' // making it more visible to the user
-            infoElement.style.fontWeight = 'bold'
+            infoElement.style.fontSize = '1.2em' ;// making it more visible to the user
+            infoElement.style.fontWeight = 'bold';
         }
     }
 }
+
 
 function handleGameEnd(): void{
     const result = currentGame.getGameResult();
@@ -195,6 +180,7 @@ function handleGameEnd(): void{
     notification.className = `notification ${notificationText}`;
     notification.style.display = 'block';
 };
+
 
 function showSimpleMessage(text: string): void {
     const notification = document.getElementById('gameNotification') as HTMLElement;
