@@ -30,7 +30,7 @@
             margin: 20px 0;
             border: 2px solid #333;
         }
-        
+
         .cell {
             background: #fff;
             border: 1px solid #ddd;
@@ -58,7 +58,7 @@
             font-size: 1.2em;
             font-weight: bold;
         }
-        
+
         .mode-selector {
             margin-bottom: 20px;
             text-align: center;
@@ -204,11 +204,21 @@
         <div class="game-board" id="gameBoard">
             <!-- Cells will be created dynamically by JavaScript -->
         </div>
+
+        <!-- Simple Notification Area -->
+        <div class="notification" id="gameNotification" style="display: none;">
+            <div class="notification-message" id="notificationMessage"></div>
+            <button class="notification-button" id="playAgainButton" onclick="resetGame()">
+                Play Again
+            </button>
+        </div>
         
         <div class="controls">
             <button onclick="resetGame()">New Game</button>
         </div>
     </div>
+
+    
 
     <!-- Load our compiled JavaScript -->
     <script type="module" src="js/ui.js"></script>
