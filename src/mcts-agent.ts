@@ -88,15 +88,15 @@ export class MCTSAgent {
     }
 
     // Method to adjust the AI's difficulty 
-    setDifficulty(difficulty: 'easy' | 'medium' | 'hard'): void {
+    setDifficulty(difficulty: "easy" | "medium" | "hard"): void {
         switch(difficulty) {
-            case 'easy':
+            case "easy":
                 this.iterationsPerMove = 250;
                 break;
-            case 'medium':
+            case "medium":
                 this.iterationsPerMove = 750;
                 break;
-            case 'hard':
+            case "hard":
                 this.iterationsPerMove = 1500;
                 break;
         }
