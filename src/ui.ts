@@ -42,6 +42,45 @@ function setupGameModeSelector(): void {
     });
 }
 
+// Function to step diffilculty selector
+function setupDifficultySelector() {
+    const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
+
+    // for changes of difficulty 
+    difficultyInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            // obtain the chosen difficulty level
+            const target = e.target as HTMLInputElement;
+            const difficulty = target.value as "easy" | "medium" | "hard";
+
+            // set the difficulty 
+            mctsAgent.setDifficulty(difficulty);
+
+
+            // console log for debugging
+            console.log(difficulty)
+        });
+    });
+    // Initial difficulty -> medium 
+    mctsAgent.setDifficulty('medium');
+}
+
+// function to hide the difficulty selector based on game mode 
+function toggleDifficultySelector(){
+    // Find difficulty selector element 
+    const difficultySelector = document.getElementById('difficultySelector');
+
+    // Exit if element doesnt exist 
+    if (!difficultySelector) return
+
+    // Show difficulty if in AI mode 
+    if (gameMode === 'Player vs AI') {
+        difficultySelector.style.display = 'flex'; 
+    } else {
+        difficultySelector.style.display = 'none'; // Hide it 
+    }
+}
+
 // Function to handle user clicks board squares
 async function handleCellClick(position: number): Promise<void>{
     // Prevents clicking while AI is thinking 
