@@ -2,13 +2,15 @@ import { GameState, Player } from "./game.js";
 import { MCTSAgent } from "./mcts-agent.js";
 // Global GameState -> current state of user interface 
 let currentGame = new GameState();
-let mctsAgent = new MCTSAgent(750); // 750 Iterations to start 
+let mctsAgent = new MCTSAgent(250); // 750 Iterations to start 
 let gameMode = 'Player vs AI';
 let isAIThinking = false;
 function initializeUI() {
     createGameBoard();
     setupGameModeSelector();
     updateDisplay();
+    setupDifficultySelector();
+    toggleDifficultySelector();
 }
 function createGameBoard() {
     const boardElement = document.getElementById('gameBoard');
@@ -30,9 +32,45 @@ function setupGameModeSelector() {
         input.addEventListener('change', (e) => {
             const target = e.target;
             gameMode = target.value;
+            // Show/hide difficulty selector based on game mode 
+            toggleDifficultySelector();
+            // Start a fresh game
             resetGame();
         });
     });
+}
+// Function to step diffilculty selector
+function setupDifficultySelector() {
+    const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
+    // for changes of difficulty 
+    difficultyInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            // obtain the chosen difficulty level
+            const target = e.target;
+            const difficulty = target.value;
+            // set the difficulty 
+            mctsAgent.setDifficulty(difficulty);
+            // console log for debugging
+            console.log(difficulty);
+        });
+    });
+    // Initial difficulty -> medium 
+    mctsAgent.setDifficulty('medium');
+}
+// function to hide the difficulty selector based on game mode 
+function toggleDifficultySelector() {
+    // Find difficulty selector element 
+    const difficultySelector = document.getElementById('difficultySelector');
+    // Exit if element doesnt exist 
+    if (!difficultySelector)
+        return;
+    // Show difficulty if in AI mode 
+    if (gameMode === 'Player vs AI') {
+        difficultySelector.style.display = 'flex';
+    }
+    else {
+        difficultySelector.style.display = 'none'; // Hide it 
+    }
 }
 // Function to handle user clicks board squares
 async function handleCellClick(position) {
