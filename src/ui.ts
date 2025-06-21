@@ -3,7 +3,7 @@ import { MCTSAgent } from "./mcts-agent.js";
 
 // Global GameState -> current state of user interface 
 let currentGame = new GameState();
-let mctsAgent = new MCTSAgent(750); // 750 Iterations to start 
+let mctsAgent = new MCTSAgent(250); // 750 Iterations to start 
 let gameMode: 'PVP' | 'Player vs AI' = 'Player vs AI';
 let isAIThinking = false;
 
@@ -11,6 +11,8 @@ function initializeUI(): void{
         createGameBoard();
         setupGameModeSelector();
         updateDisplay();
+        setupDifficultySelector();
+        toggleDifficultySelector();
 }
 
 function createGameBoard(): void{
@@ -19,7 +21,7 @@ function createGameBoard(): void{
 
     boardElement.innerHTML = ''; // Clear the existing content 
 
-    for (let i=0; i<9;i++){
+    for (let i=0; i<9; i++){
         const cell = document.createElement('button');
 
         cell.className ='cell';
@@ -37,6 +39,11 @@ function setupGameModeSelector(): void {
         input.addEventListener('change', (e) => {
             const target = e.target as HTMLInputElement;
             gameMode = target.value as 'Player vs AI' | 'PVP';
+
+            // Show/hide difficulty selector based on game mode 
+            toggleDifficultySelector();
+
+            // Start a fresh game
             resetGame();
         });
     });
