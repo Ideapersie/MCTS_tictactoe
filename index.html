@@ -102,6 +102,61 @@
             border-color: #0056b3;
         }
 
+        .difficulty-selector {
+        margin-bottom: 15px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: all 0.3s ease;
+        max-height: 100px;
+        overflow: hidden;
+        }
+
+        .difficulty-selector.hidden {
+            max-height: 0;
+            margin: 0;
+            opacity: 0;
+        }
+
+        .difficulty-selector label {
+            cursor: pointer;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 15px;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .difficulty-selector label:has(input[value="easy"]:checked) {
+            background-color: #28a745;
+            color: white;
+            border-color: #1e7e34;
+        }
+
+        .difficulty-selector label:has(input[value="medium"]:checked) {
+            background-color: #ffc107;
+            color: #212529;
+            border-color: #d39e00;
+        }
+
+        .difficulty-selector label:has(input[value="hard"]:checked) {
+            background-color: #dc3545;
+            color: white;
+            border-color: #bd2130;
+        }
+
+        .selector-title {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
         /* Notification Styles */
         .notification {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -199,6 +254,24 @@
                 <input type="radio" name="gameMode" value="PVP">
                 Player vs Player
             </label>
+        </div>
+
+        <div class="difficulty-selector" id="difficultySelector">
+            <div class="selector-title">AI Difficulty</div>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <label>
+                    <input type="radio" name="difficulty" value="easy">
+                    <span>Easy</span>
+                </label>
+                <label>
+                    <input type="radio" name="difficulty" value="medium" checked>
+                    <span>Medium</span>
+                </label>
+                <label>
+                    <input type="radio" name="difficulty" value="hard">
+                    <span>Hard</span>
+                </label>
+            </div>
         </div>
         
         <div class="game-info" id="gameInfo">
