@@ -102,21 +102,19 @@
             border-color: #0056b3;
         }
 
-        .difficulty-selector {
-        margin-bottom: 15px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        transition: all 0.3s ease;
-        max-height: 100px;
-        overflow: hidden;
-        }
-
         .difficulty-selector.hidden {
+            display: none !important;
+            opacity: 0;
             max-height: 0;
             margin: 0;
-            opacity: 0;
+        }
+
+        .difficulty-selector {
+            margin-bottom: 15px;
+            text-align: center;
+            display: block;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         .difficulty-selector label {
