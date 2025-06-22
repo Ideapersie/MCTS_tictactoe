@@ -7,10 +7,10 @@ let gameMode = 'Player vs AI';
 let isAIThinking = false;
 function initializeUI() {
     createGameBoard();
-    setupGameModeSelector();
-    updateDisplay();
     setupDifficultySelector();
+    setupGameModeSelector();
     toggleDifficultySelector();
+    updateDisplay();
 }
 function createGameBoard() {
     const boardElement = document.getElementById('gameBoard');
@@ -32,6 +32,8 @@ function setupGameModeSelector() {
         input.addEventListener('change', (e) => {
             const target = e.target;
             gameMode = target.value;
+            // Debug optins 
+            console.log('Game mode changed to:', gameMode);
             // Show/hide difficulty selector based on game mode 
             toggleDifficultySelector();
             // Start a fresh game
@@ -51,7 +53,9 @@ function setupDifficultySelector() {
             // set the difficulty 
             mctsAgent.setDifficulty(difficulty);
             // console log for debugging
-            console.log(difficulty);
+            console.log('Difficulty changed to:', difficulty);
+            // reset the game when difficulty changes 
+            resetGame();
         });
     });
     // Initial difficulty -> medium 
@@ -66,10 +70,14 @@ function toggleDifficultySelector() {
         return;
     // Show difficulty if in AI mode 
     if (gameMode === 'Player vs AI') {
-        difficultySelector.style.display = 'flex';
+        difficultySelector.style.display = 'block';
+        difficultySelector.style.opacity = '1';
+        difficultySelector.classList.remove('hidden');
     }
     else {
         difficultySelector.style.display = 'none'; // Hide it 
+        difficultySelector.style.opacity = '0';
+        difficultySelector.classList.add('hidden');
     }
 }
 // Function to handle user clicks board squares

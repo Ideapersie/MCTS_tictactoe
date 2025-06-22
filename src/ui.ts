@@ -9,10 +9,10 @@ let isAIThinking = false;
 
 function initializeUI(): void{
         createGameBoard();
-        setupGameModeSelector();
-        updateDisplay();
         setupDifficultySelector();
+        setupGameModeSelector();
         toggleDifficultySelector();
+        updateDisplay();
 }
 
 function createGameBoard(): void{
@@ -40,6 +40,9 @@ function setupGameModeSelector(): void {
             const target = e.target as HTMLInputElement;
             gameMode = target.value as 'Player vs AI' | 'PVP';
 
+            // Debug optins 
+            console.log('Game mode changed to:', gameMode);
+
             // Show/hide difficulty selector based on game mode 
             toggleDifficultySelector();
 
@@ -58,14 +61,17 @@ function setupDifficultySelector() {
         input.addEventListener('change', (e) => {
             // obtain the chosen difficulty level
             const target = e.target as HTMLInputElement;
-            const difficulty = target.value as "easy" | "medium" | "hard";
+            const difficulty = target.value as 'easy' | 'medium' | 'hard';
 
             // set the difficulty 
             mctsAgent.setDifficulty(difficulty);
 
 
             // console log for debugging
-            console.log(difficulty)
+            console.log('Difficulty changed to:', difficulty); 
+
+            // reset the game when difficulty changes 
+            resetGame();
         });
     });
     // Initial difficulty -> medium 
@@ -82,9 +88,13 @@ function toggleDifficultySelector(){
 
     // Show difficulty if in AI mode 
     if (gameMode === 'Player vs AI') {
-        difficultySelector.style.display = 'flex'; 
+        difficultySelector.style.display = 'block'; 
+        difficultySelector.style.opacity = '1';
+        difficultySelector.classList.remove('hidden');
     } else {
         difficultySelector.style.display = 'none'; // Hide it 
+        difficultySelector.style.opacity = '0'
+        difficultySelector.classList.add('hidden');
     }
 }
 
