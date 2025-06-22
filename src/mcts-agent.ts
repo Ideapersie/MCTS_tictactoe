@@ -5,7 +5,7 @@ export class MCTSAgent {
     private iterationsPerMove: number;
     private explorationParameter: number; 
 
-    constructor(iterationsPerGame: number =1000, explorationParameter: number = Math.sqrt(2)) {
+    constructor(iterationsPerGame: number = 500, explorationParameter: number = Math.sqrt(2)) {
         this.iterationsPerMove = iterationsPerGame;
         this.explorationParameter = explorationParameter;
     }
@@ -91,15 +91,17 @@ export class MCTSAgent {
     setDifficulty(difficulty: "easy" | "medium" | "hard"): void {
         switch(difficulty) {
             case "easy":
-                this.iterationsPerMove = 250;
+                this.iterationsPerMove = 250; // Faster but weaker AI
                 break;
             case "medium":
-                this.iterationsPerMove = 750;
+                this.iterationsPerMove = 500; // Still Fast but possible to beat 
                 break;
             case "hard":
-                this.iterationsPerMove = 1500;
+                this.iterationsPerMove = 1000; // Slighter slower and impossible to beat 
                 break;
         }
+        // Debugging log
+        console.log(`AI difficulty set to ${difficulty} (${this.iterationsPerMove} iterations)`);
     }
 }
 

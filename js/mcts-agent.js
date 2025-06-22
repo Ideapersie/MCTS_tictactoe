@@ -1,7 +1,7 @@
 import { getOppositePlayer } from "./game.js";
 import { MCTSNode } from "./mcts-node.js";
 export class MCTSAgent {
-    constructor(iterationsPerGame = 1000, explorationParameter = Math.sqrt(2)) {
+    constructor(iterationsPerGame = 500, explorationParameter = Math.sqrt(2)) {
         this.iterationsPerMove = iterationsPerGame;
         this.explorationParameter = explorationParameter;
     }
@@ -74,14 +74,16 @@ export class MCTSAgent {
     setDifficulty(difficulty) {
         switch (difficulty) {
             case "easy":
-                this.iterationsPerMove = 250;
+                this.iterationsPerMove = 250; // Faster but weaker AI
                 break;
             case "medium":
-                this.iterationsPerMove = 750;
+                this.iterationsPerMove = 500; // Still Fast but possible to beat 
                 break;
             case "hard":
-                this.iterationsPerMove = 1500;
+                this.iterationsPerMove = 1000; // Slighter slower and impossible to beat 
                 break;
         }
+        // Debugging log
+        console.log(`AI difficulty set to ${difficulty} (${this.iterationsPerMove} iterations)`);
     }
 }
