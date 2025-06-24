@@ -2,20 +2,20 @@ import { GameState, Player } from "./game.js";
 import { MCTSAgent } from "./mcts-agent.js";
 // Global GameState -> current state of user interface 
 let currentGame = new GameState();
-let mctsAgent = new MCTSAgent(250); // 750 Iterations to start 
+let mctsAgent = new MCTSAgent(30); // 30 Iterations to start 
 let gameMode = 'Player vs AI';
 let isAIThinking = false;
 function initializeUI() {
     createGameBoard();
-    setupDifficultySelector();
     setupGameModeSelector();
+    setupDifficultySelector();
     toggleDifficultySelector();
     updateDisplay();
 }
 function createGameBoard() {
     const boardElement = document.getElementById('gameBoard');
     if (!boardElement)
-        return; //Early return
+        return; // Early return
     boardElement.innerHTML = ''; // Clear the existing content 
     for (let i = 0; i < 9; i++) {
         const cell = document.createElement('button');
