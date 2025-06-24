@@ -74,13 +74,13 @@ export class MCTSAgent {
     setDifficulty(difficulty) {
         switch (difficulty) {
             case "easy":
-                this.iterationsPerMove = 250; // Faster but weaker AI
+                this.iterationsPerMove = 10; // Faster but weaker AI
                 break;
             case "medium":
-                this.iterationsPerMove = 500; // Still Fast but possible to beat 
+                this.iterationsPerMove = 30; // Still Fast but possible to beat 
                 break;
             case "hard":
-                this.iterationsPerMove = 1000; // Slighter slower and impossible to beat 
+                this.iterationsPerMove = 200; // Slighter slower and impossible to beat 
                 break;
         }
         // Debugging log
